@@ -1,7 +1,7 @@
 #!/bin/sh           
 
 sourcedir="../E99-Language-Learning"
-hasher="php func-hash.php -p $sourcedir"
+hasher="php func-hash.php -p $sourcedir/backend;$sourcedir/apis"
 gitbranch="back-end-working"
 
 datadir="data"
@@ -15,7 +15,7 @@ git_cmd="git --git-dir $sourcedir/.git --work-tree $sourcedir"
 rm $datadir/*
 
 #get all the commit hashes
-$git_cmd log -3 --pretty=format:"%h - %ad" > $commits
+$git_cmd log -20 --pretty=format:"%h - %ad" > $commits
 
 #go through each commit, hash the functions
 for commit in `cat $commits | cut -d ' ' -f1`

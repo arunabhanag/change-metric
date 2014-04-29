@@ -5,34 +5,42 @@
 	if (count($options) != 1)
 		exit ("Please specify path (-p).");
 	
-	$path = $options['p'];
-	
-	if (! file_exists($path) ) 
-		exit ("Invalid path name.");
+	$paths = $options['p'];
 
-	set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-	
-	$dirItr = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
-	
-	$filter = new RecursiveCallbackFilterIterator($dirItr, function ($current, $key, $iterator) {
-		if ($current->isDir())
-			return $current->getFilename()[0] != '.';
-		else 
-			return $current->getExtension() === 'php';
-		});
+	$paths_arr = explode(";", $paths);
 
-
-	$objects = new RecursiveIteratorIterator($filter, RecursiveIteratorIterator::SELF_FIRST);
-
-	foreach($objects as $name => $d)
+	foreach($paths_arr as $path)
 	{
-		if (strpos($d->getFilename(), '.php') !== FALSE) 
-		{
-			$file_path = $d->getPath() . DIRECTORY_SEPARATOR . $d->getFilename();
-			hash_functions($file_path);
-		}		
+		process_directory($path);
 	}
+
+	function process_directory($path)
+	{
+		if (! file_exists($path) ) 
+			exit ("Invalid path name: ".$path);
+
+		$dirItr = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
 	
+		$filter = new RecursiveCallbackFilterIterator($dirItr, function ($current, $key, $iterator) {
+			if ($current->isDir())
+				return $current->getFilename()[0] != '.';
+			else 
+				return $current->getExtension() === 'php';
+			});
+
+
+		$objects = new RecursiveIteratorIterator($filter, RecursiveIteratorIterator::SELF_FIRST);
+
+		foreach($objects as $name => $d)
+		{
+			if (strpos($d->getFilename(), '.php') !== FALSE) 
+			{
+				$file_path = $d->getPath() . DIRECTORY_SEPARATOR . $d->getFilename();
+				hash_functions($file_path);
+			}		
+		}
+	}	
+
 	function hash_functions($file_path)
 	{
 		$content = file_get_contents($file_path);
