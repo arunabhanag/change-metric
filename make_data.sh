@@ -12,16 +12,22 @@ git_cmd="git --git-dir $sourcedir/.git --work-tree $sourcedir"
 
 
 
-rm $datadir/*
+#rm $datadir/*
 
 #get all the commit hashes
-$git_cmd log -20 --pretty=format:"%h - %ad" > $commits
+$git_cmd log --pretty=format:"%h - %ad" > $commits
 
 #go through each commit, hash the functions
 for commit in `cat $commits | cut -d ' ' -f1`
 do 
-    $git_cmd checkout $commit
-	$hasher > "$datadir/hash_$commit.txt"
+	file="$datadir/hash_$commit.txt"
+#    $git_cmd checkout $commit
+#	$hasher > $file
+	if test ! -s "$file"
+	then
+	    $git_cmd checkout $commit
+		$hasher > $file
+	fi
 done
 
 #go back to the HEAD
