@@ -15,7 +15,7 @@ git_cmd="git --git-dir $sourcedir/.git --work-tree $sourcedir"
 #rm $datadir/*
 
 #get all the commit hashes
-$git_cmd log --pretty=format:"%h - %ad" > $commits
+$git_cmd log --date=short --pretty=format:"%h - %ad" > $commits
 
 #go through each commit, hash the functions
 for commit in `cat $commits | cut -d ' ' -f1`
