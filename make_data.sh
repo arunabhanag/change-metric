@@ -9,10 +9,8 @@ commits="$datadir/commits.txt"
 
 git_cmd="git --git-dir $sourcedir/.git --work-tree $sourcedir"
 
-
-
-
-#rm $datadir/*
+#make data directory if it does not exist
+mkdir -p $datadir
 
 #get all the commit hashes
 $git_cmd log --date=short --pretty=format:"%h - %ad" > $commits
@@ -21,8 +19,6 @@ $git_cmd log --date=short --pretty=format:"%h - %ad" > $commits
 for commit in `cat $commits | cut -d ' ' -f1`
 do 
 	file="$datadir/hash_$commit.txt"
-#    $git_cmd checkout $commit
-#	$hasher > $file
 	if test ! -s "$file"
 	then
 	    $git_cmd checkout $commit

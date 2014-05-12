@@ -9,7 +9,7 @@ commitsFile = "./data/commits.txt"
 fhashes = set()
 functionsToTrack = set()
 funcToCommits = dict()
-funcToCounts = dict()
+funcToCommitCount = dict()
 commits = list()
 commitToSeq = dict()
 commitToFuncs = dict()
@@ -43,10 +43,10 @@ def addToMaps(file, commit):
 				if func in functionsToTrack:
 					if funcToCommits.has_key(func):
 						funcToCommits[func] = funcToCommits[func] + ',' + commit
-						funcToCounts[func] += 1
+						funcToCommitCount[func] += 1
 					else:
 						funcToCommits[func] = commit
-						funcToCounts[func] = 0
+						funcToCommitCount[func] = 0
 
 #creates commitToFunc map. Ignores the functions that are committed only once (never changed)
 def makeCommitsToFunc():
@@ -78,7 +78,7 @@ for commit in commits:
 makeCommitsToFunc()
 
 
-f = open('commitToCount.csv', 'w')
+f = open('CommitToChangeCount.csv', 'w')
 for commit in commits:
 	if commitToCount.has_key(commit):
 		f.write('{0}, {1}\n'.format(commit, commitToCount[commit]))
@@ -93,27 +93,27 @@ f.close()
 
 #remove the entries with value 0
 
-#functions = funcToCounts.keys()
-#functions.sort(lamda x, y: comp(funcToCounts[x], funcToCounts[y])
+#functions = funcToCommitCount.keys()
+#functions.sort(lamda x, y: comp(funcToCommitCount[x], funcToCommitCount[y])
 
-sortedFuncs = sorted(funcToCounts.iterkeys(), key=lambda k: funcToCounts[k], reverse=True)
+sortedFuncs = sorted(funcToCommitCount.iterkeys(), key=lambda k: funcToCommitCount[k], reverse=True)
 
-f = open('funcToCount.csv', 'w')
+f = open('FunctionNameToChangeCount.csv', 'w')
 for func in sortedFuncs:
-	f.write('{0}, {1}\n'.format(func, funcToCounts[func]))
+	f.write('{0}, {1}\n'.format(func, funcToCommitCount[func]))
 f.close()
 
 
-commitCountToFuncCount = dict()
+changeCountToFuncCount = dict()
 
-for key, value in funcToCounts.iteritems():
-	if commitCountToFuncCount.has_key(value):
-		commitCountToFuncCount[value] += 1
+for func, count in funcToCommitCount.iteritems():
+	if changeCountToFuncCount.has_key(count):
+		changeCountToFuncCount[count] += 1
 	else:
-		commitCountToFuncCount[value] = 1
+		changeCountToFuncCount[count] = 1
 
-f = open('commitCountToFuncCount.csv', 'w')
-for key, value in commitCountToFuncCount.iteritems():
+f = open('ChangeCountToFunctionCount.csv', 'w')
+for key, value in changeCountToFuncCount.iteritems():
 		f.write('{0}, {1}\n'.format(key, value))
 f.close()
 
